@@ -104,7 +104,7 @@ public class Mainwindow extends JFrame {
 						try {
 							listmodel.clear();
 							MapFactory map =  new MapFactory(progressBar);
-                            lol = (ChampMap) map.getMap(names.getText().split(";"), new StatFile(new File("D:\\Dropbox\\stats.stats")),null, MapFactory.Maps.ChampMap);
+                            lol = (ChampMap) map.getMap(names.getText().split(";"), null,new File("E:\\Dateien\\Eigene Dokumente\\Online\\Lol Replays"), MapFactory.Maps.ChampMap);
                             date = (DateMap) map.getMap(names.getText().split(";"), new StatFile(new File("D:\\Dropbox\\stats.stats")),null, MapFactory.Maps.TimeMap);
                             gaem = (GameMap) map.getMap(names.getText().split(";"), new StatFile(new File("D:\\Dropbox\\stats.stats")),null, MapFactory.Maps.GameMap);
 

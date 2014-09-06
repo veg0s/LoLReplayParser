@@ -28,15 +28,12 @@ public class MapFactory {
     private int FileWithoutSummoner;
     
    public MapFactory(JProgressBar bar) throws Exception, SummonerNotFoundException{
-	  // this.folder = folder;
-	   this.name = name;
 	   this.bar = bar;
-       //getFile(folder.getAbsolutePath());
 	   bar.setMaximum(count);
    }
    
    public ReplayDataMap getMap(String[] names,StatFile file,File folder,Maps mapType) throws IOException, MapTypeNotFoundException {
-        resetStats();
+       resetStats();
        ReplayDataMap map;
        ReplayDataMap test;
 	   	bar.setValue(0);
@@ -76,7 +73,7 @@ public class MapFactory {
                         replayDataMap.addReplay(ReplayFileParser.getJsonFromReplay(tempFile));
                         this.FilesWithSummoner++;
                     } catch (SummonerNotFoundException e) {
-                       logger.warn("Summoner not found [" + tempFile.getAbsolutePath() + "]");
+                       //logger.warn("Summoner not found [" + tempFile.getAbsolutePath() + "]");
                        this.FileWithoutSummoner++;
 
                     } catch (FileNotValidException e) {
@@ -90,7 +87,8 @@ public class MapFactory {
 						// TODO Auto-generated catch block
 						e.printStackTrace();
 					} catch (JSONException e) {
-                        e.printStackTrace();
+                        logger.warn("JSONException [" + tempFile.getAbsolutePath() + "]");
+                        this.CorruptedFiles++;
                     }
                 }
             	
@@ -106,13 +104,21 @@ public class MapFactory {
         while((line = reader.readLine()) != null)
             try {
                 map.addReplay(new JSONObject(line));
-            } catch (JSONException e) {
-                e.printStackTrace();
             } catch (SummonerNotFoundException e) {
-                e.printStackTrace();
+                logger.warn("Summoner not found [" + line + "]");
+                this.FileWithoutSummoner++;
+
             } catch (FileNotValidException e) {
-                e.printStackTrace();
+                logger.warn("File not Valid [" +line + "]");
+                this.CorruptedFiles++;
+
+            } catch (NullPointerException e) {
+                logger.warn("NullPointerException [" +line + "]");
+                this.CorruptedFiles++;
             } catch (IOException e) {
+                // TODO Auto-generated catch block
+                e.printStackTrace();
+            } catch (JSONException e) {
                 e.printStackTrace();
             }
         return map;
