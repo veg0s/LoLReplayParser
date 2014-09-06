@@ -3,11 +3,12 @@ package gui;
 import Chart.Chart;
 import Chart.DateChart;
 import Chart.GamesPlayedPerMonthChart;
-import Exception.SummonerNotFoundException;
-import Map.ChampMap;
-import Map.DateMap;
-import Map.GameMap;
-import Map.MapFactory;
+import exceptions.MapTypeNotFoundException;
+import exceptions.SummonerNotFoundException;
+import maptypes.ChampMap;
+import maptypes.DateMap;
+import maptypes.GameMap;
+import maptypes.MapFactory;
 import replay.StatFile;
 
 import javax.swing.*;
@@ -102,12 +103,10 @@ public class Mainwindow extends JFrame {
 
 						try {
 							listmodel.clear();
-							MapFactory map =  new MapFactory(names.getText().split(";"),progressBar);
-
-                            lol = map.getChampionMap(new StatFile(new File("D:\\Dropbox\\stats.stats")));
-							date = map.getDateMap(new StatFile(new File("D:\\Dropbox\\stats.stats")));
-							gaem = map.getGameMap(new StatFile(new File("D:\\Dropbox\\stats.stats")));
-							
+							MapFactory map =  new MapFactory(progressBar);
+                            lol = (ChampMap) map.getMap(names.getText().split(";"), new StatFile(new File("D:\\Dropbox\\stats.stats")),null, MapFactory.Maps.ChampMap);
+                            date = (DateMap) map.getMap(names.getText().split(";"), new StatFile(new File("D:\\Dropbox\\stats.stats")),null, MapFactory.Maps.TimeMap);
+                            gaem = (GameMap) map.getMap(names.getText().split(";"), new StatFile(new File("D:\\Dropbox\\stats.stats")),null, MapFactory.Maps.GameMap);
 
 						    new Chart(lol.getChampionMap(),ChartPanel);
 							chart = new DateChart(date.getMap(),ChartPanel);
@@ -123,8 +122,10 @@ public class Mainwindow extends JFrame {
 						} catch (SummonerNotFoundException e) {
 							// TODO Auto-generated catch block
 							e.printStackTrace();
-						}
-					}
+						} catch (MapTypeNotFoundException e) {
+                            e.printStackTrace();
+                        }
+                    }
 				}).start();
 
 			}

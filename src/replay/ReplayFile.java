@@ -1,7 +1,7 @@
 package replay;
 
-import Exception.FileNotValidException;
-import Exception.SummonerNotFoundException;
+import exceptions.FileNotValidException;
+import exceptions.SummonerNotFoundException;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;

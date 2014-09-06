@@ -1,6 +1,6 @@
 package replay;
 
-import Exception.FileNotValidException;
+import exceptions.FileNotValidException;
 import org.json.JSONException;
 import org.json.JSONObject;
 

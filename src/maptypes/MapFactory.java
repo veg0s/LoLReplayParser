@@ -1,12 +1,13 @@
-package Map;
+package maptypes;
 
-import Exception.FileNotValidException;
-import Exception.SummonerNotFoundException;
+import exceptions.FileNotValidException;
+import exceptions.SummonerNotFoundException;
 import org.apache.log4j.Logger;
 import org.json.JSONException;
 import org.json.JSONObject;
 import replay.ReplayFileParser;
 import replay.StatFile;
+import exceptions.*;
 
 import javax.swing.*;
 import java.io.*;
@@ -26,7 +27,7 @@ public class MapFactory {
     private int FilesWithSummoner;
     private int FileWithoutSummoner;
     
-   public MapFactory(String[] name, JProgressBar bar) throws Exception, SummonerNotFoundException{
+   public MapFactory(JProgressBar bar) throws Exception, SummonerNotFoundException{
 	  // this.folder = folder;
 	   this.name = name;
 	   this.bar = bar;
@@ -34,25 +35,30 @@ public class MapFactory {
 	   bar.setMaximum(count);
    }
    
-   public ChampMap getChampionMap(StatFile file) throws IOException {
+   public ReplayDataMap getMap(String[] names,StatFile file,File folder,Maps mapType) throws IOException, MapTypeNotFoundException {
         resetStats();
-        ReplayDataMap champmap = getDataMap(file,new ChampMap(name));
+       ReplayDataMap map;
+       ReplayDataMap test;
 	   	bar.setValue(0);
-	   	return (ChampMap) champmap;
-   }
-
-   public DateMap getDateMap(StatFile file) throws IOException {
-       resetStats();
-       ReplayDataMap dateMap = getDataMap(file,new DateMap(name));
-	   	bar.setValue(0);
-	   	return (DateMap) dateMap;
-   }
-
-   public GameMap getGameMap(StatFile file) throws IOException {
-       resetStats();
-       ReplayDataMap champmap = getDataMap(file,new GameMap(name));
-	   bar.setValue(0);
-	   return (GameMap) champmap;
+       switch(mapType)
+       {
+           case GameMap:
+               test = new GameMap(names);
+               break;
+           case TimeMap:
+               test = new DateMap(names);
+               break;
+           case ChampMap:
+               test = new ChampMap(names);
+               break;
+           default:
+               throw new MapTypeNotFoundException();
+       }
+       if(file != null)
+           map = getDataMap(file,test);
+        else
+           map = getDataMap(folder,test);
+	   	return map;
    }
 
 
@@ -169,5 +175,11 @@ public class MapFactory {
         this.FilesWithSummoner = 0;
         this.FileWithoutSummoner = 0;
         this.ReplayFileCount = 0;
+    }
+
+    public static enum Maps{
+        ChampMap,
+        GameMap,
+        TimeMap;
     }
 }

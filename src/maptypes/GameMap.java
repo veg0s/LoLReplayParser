@@ -1,7 +1,7 @@
-package Map;
+package maptypes;
 
-import Exception.FileNotValidException;
-import Exception.SummonerNotFoundException;
+import exceptions.FileNotValidException;
+import exceptions.SummonerNotFoundException;
 import org.json.JSONException;
 import org.json.JSONObject;
 import replay.ReplayFile;

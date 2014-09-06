@@ -1,8 +1,8 @@
-package Map;
+package maptypes;
 
 import org.json.JSONException;
 import org.json.JSONObject;
-import Exception.*;
+import exceptions.*;
 import java.io.IOException;
 
 /**

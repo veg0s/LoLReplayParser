@@ -1,5 +1,5 @@
-import Exception.FileNotValidException;
-import Exception.SummonerNotFoundException;
+import exceptions.FileNotValidException;
+import exceptions.SummonerNotFoundException;
 import org.json.JSONException;
 import replay.ReplayFile;
 import replay.ReplayFileParser;
