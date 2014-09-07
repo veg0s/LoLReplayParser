@@ -97,7 +97,7 @@ public class MapFactory {
         return replayDataMap;
     }
 
-    public ReplayDataMap getDataMap(StatFile file, ReplayDataMap replayMap) throws IOException {
+    private ReplayDataMap getDataMap(StatFile file, ReplayDataMap replayMap) throws IOException {
         ReplayDataMap map = replayMap;
         BufferedReader reader = new BufferedReader(new FileReader(file.getStatFile()));
         String line;

@@ -17,10 +17,12 @@ import javax.swing.LayoutStyle.ComponentPlacement;
 import javax.swing.border.EmptyBorder;
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
+import javax.swing.filechooser.FileFilter;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.io.File;
+import java.io.FileWriter;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Map;
@@ -37,6 +39,7 @@ public class Mainwindow extends JFrame {
 	private JLabel lblNewLabel;
 	private JTabbedPane ChartPanel;
 	private DefaultListModel<String> listmodel;
+    private JFileChooser chooser;
 
     ChampMap lol;
     DateMap date;
@@ -51,7 +54,7 @@ public class Mainwindow extends JFrame {
 	 */
 	public static void main(String[] args) throws IOException {
 		
-//		new StatSaver().ReplaysToStatsFile(new File("E:\\Dateien\\Eigene Dokumente\\Online\\Lol Replays"), new File("l"));
+		//new StatSaver().ReplaysToStatsFile(new File("E:\\Dateien\\Eigene Dokumente\\Online\\Lol Replays"), new File("l"));
 		
 		EventQueue.invokeLater(new Runnable() {
 			public void run() {
@@ -101,12 +104,16 @@ public class Mainwindow extends JFrame {
 					public void run() {
 						ChartPanel.removeAll();
 
+
 						try {
+
+                            StatFile statfile = getStatFile();
+                            File folder = null;
 							listmodel.clear();
 							MapFactory map =  new MapFactory(progressBar);
-                            lol = (ChampMap) map.getMap(names.getText().split(";"), null,new File("E:\\Dateien\\Eigene Dokumente\\Online\\Lol Replays"), MapFactory.Maps.ChampMap);
-                            date = (DateMap) map.getMap(names.getText().split(";"), new StatFile(new File("D:\\Dropbox\\stats.stats")),null, MapFactory.Maps.TimeMap);
-                            gaem = (GameMap) map.getMap(names.getText().split(";"), new StatFile(new File("D:\\Dropbox\\stats.stats")),null, MapFactory.Maps.GameMap);
+                            lol = (ChampMap) map.getMap(names.getText().split(";"),statfile,folder, MapFactory.Maps.ChampMap);
+                            date = (DateMap) map.getMap(names.getText().split(";"),statfile ,folder, MapFactory.Maps.TimeMap);
+                            gaem = (GameMap) map.getMap(names.getText().split(";"),statfile,folder, MapFactory.Maps.GameMap);
 
 						    new Chart(lol.getChampionMap(),ChartPanel);
 							chart = new DateChart(date.getMap(),ChartPanel);
@@ -191,6 +198,7 @@ public class Mainwindow extends JFrame {
 		
 		scrollPane.setViewportView(list);
 		contentPane.setLayout(gl_contentPane);
+
 	}
 	
 	
@@ -202,4 +210,61 @@ public class Mainwindow extends JFrame {
 			listmodel.addElement(entry.getKey() + " - [" + entry.getValue()+"]");
 		}
 	}
+
+    public StatFile getStatFile() throws IOException {
+        String Path = null;
+        String AbsolutePath = null;
+        JFileChooser chooser = new JFileChooser();
+        chooser.setFileSelectionMode(JFileChooser.FILES_ONLY);
+        chooser.setDialogTitle("Get Stats File");
+        chooser.setFileFilter(new FileFilter() {
+            public boolean accept(File f) {
+                return f.getName().toLowerCase().endsWith(".stats") || f.isDirectory();
+            }
+
+            public String getDescription() {
+                return "(*.stats)";
+            }
+        });
+        int rueckgabeWert = chooser.showOpenDialog(null);
+        if (rueckgabeWert == JFileChooser.APPROVE_OPTION) {
+            AbsolutePath = chooser.getSelectedFile().getAbsolutePath();
+            if (AbsolutePath.contains(".stats")) {
+                Path = chooser.getSelectedFile().getParent();
+                File FilePath = new File("Path");
+                FileWriter writer;
+                writer = new FileWriter(FilePath);
+                writer.write(Path);
+                writer.flush();
+                writer.close();
+            } else {
+                System.out.println("- No League of Legends Installation found :(");
+                Path = null;
+            }
+        }
+        return new StatFile(new File(AbsolutePath));
+    }
+
+    public File getFolder() throws IOException {
+        String Path = null;
+        File AbsolutePath = null;
+        JFileChooser chooser = new JFileChooser();
+        chooser.setFileSelectionMode(JFileChooser.DIRECTORIES_ONLY);
+        chooser.setDialogTitle("Get Stats File");
+        chooser.setFileFilter(new FileFilter() {
+            public boolean accept(File f) {
+                return  f.isDirectory();
+            }
+
+            public String getDescription() {
+                return "(Replayfolder)";
+            }
+        });
+        int rueckgabeWert = chooser.showOpenDialog(null);
+        if (rueckgabeWert == JFileChooser.APPROVE_OPTION) {
+            AbsolutePath = chooser.getSelectedFile();
+
+        }
+        return  AbsolutePath;
+    }
 }
